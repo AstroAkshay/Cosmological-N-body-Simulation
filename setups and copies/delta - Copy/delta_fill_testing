@@ -1,0 +1,20 @@
+import numpy as np
+from code.delta_fill_helper import delta_fill, set_grid_params
+
+Nx = Ny = Nz = 4
+gridsize = 1.0
+set_grid_params(Nx, Ny, Nz, gridsize)
+
+rho_planar = np.zeros((Nx, Ny, Nz//2 + 1, 2), dtype=np.float32)
+randn = np.random.standard_normal(Nx * Ny * (Nz//2 + 1) * 2).astype(np.float32)
+
+def Pk(k):
+    if k == 0: return 0.0
+    return 1.0 / (1.0 + k**2)
+
+delta_fill(rho_planar, randn, Pk)
+
+delta_k = rho_planar[...,0] + 1j*rho_planar[...,1]
+rho_real = np.fft.irfftn(delta_k, s=(Nx, Ny, Nz), axes=(0,1,2))
+
+print("rho_real:\n", rho_real)

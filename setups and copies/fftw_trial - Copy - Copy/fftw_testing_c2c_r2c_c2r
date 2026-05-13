@@ -1,0 +1,36 @@
+import numpy as np
+from fftw.fftw3d import fft3d
+
+LL=0.07
+Nx, Ny, Nz = 4,4,4
+vol=(LL**3*Nx*Ny*Nz)
+# -----------------------
+# Example 1: complex-to-complex in-place
+# -----------------------
+
+data = np.random.rand(Nx, Ny, Nz) + 1j * np.random.rand(Nx, Ny, Nz)
+print("INITIAL DATA :\n",data)
+
+# Perform FFT in-place
+fft3d(data, mode="c2c", direction="forward")  # WORKS FINE
+print("C2C FFT result:", data.shape)
+print(data)
+
+# Example 3: complex-to-real inverse FFT
+# -----------------------
+reconstructed = fft3d(data/vol, mode="c2r")
+print("C2R FFT result shape:", reconstructed.shape)
+print("FINAL ARRAY :\n",reconstructed)
+
+
+# -----------------------
+# Example 2: real-to-complex FFT
+# -----------------------
+real_data = np.random.rand(Nx, Ny, Nz)
+print("INITIAL DATA :\n",real_data)
+
+complex_out = fft3d(LL**3*real_data, mode="r2c")
+print("R2C FFT result shape:", complex_out.shape)
+print(complex_out)
+
+
